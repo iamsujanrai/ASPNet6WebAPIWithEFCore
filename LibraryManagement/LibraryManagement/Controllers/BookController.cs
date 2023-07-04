@@ -1,7 +1,5 @@
-﻿using LibraryManagement.Models;
-using Microsoft.AspNetCore.Http;
+﻿using LibraryManagement.Services.BookService;
 using Microsoft.AspNetCore.Mvc;
-using static System.Reflection.Metadata.BlobBuilder;
 
 namespace LibraryManagement.Controllers
 {
@@ -9,67 +7,52 @@ namespace LibraryManagement.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        private static List<Book> books = new List<Book>
+        private readonly IBookService _bookService;
+
+        public BookController(IBookService bookService)
         {
-            new Book
-            {
-                Id = 1,
-                Name = "Ikigai",
-                Description = "This is japanese book",
-                Price = 100,
-            },
-            new Book
-            {
-                Id = 2,
-                Name = "Think like a monk",
-                Description = "Book by Jay Shetty",
-                Price = 200,
-            }
-        };
+            _bookService = bookService;
+        }
 
         [HttpGet]
         public async Task<ActionResult<List<Book>>> GetAllBooks()
         {
-            return Ok(books);
+            var result = _bookService.GetAllBooks();
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetSingleBook(int id)
         {
-            var book = books.Find(x => x.Id == id);
-            if (book is null)
-                return NotFound("Requested book not found in library");
-            return Ok(book);
+            var result = _bookService.GetSingleBook(id);
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<ActionResult<List<Book>>> AddBook(Book book)
         {
-            books.Add(book);
-            return Ok(books);
+            var result = _bookService.AddBook(book);
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<List<Book>>> UpdateBook(int id, Book book)
         {
-            var foundBook = books.Find(x => x.Id == id);
-            if (foundBook is null)
-                return NotFound("Requested book not found in library");
-            foundBook.Name = book.Name;
-            foundBook.Description = book.Description;
-            foundBook.Price = book.Price;
+            var result = _bookService.UpdateBook(id, book);
+            if (result is null)
+                return NotFound("Book not found in library.");
 
-            return Ok(books);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<List<Book>>> DeleteBook (int id)
         {
-            var foundBook = books.Find(x => x.Id == id);
-            if (foundBook is null)
-                return NotFound("Requested book not found in library");
-            books.Remove(foundBook);
-            return Ok(books);
+            var result = _bookService.DeleteBook(id);
+            if (result is null)
+                return NotFound("Book not found in library.");
+
+            return Ok(result);
         }
     }
 }
