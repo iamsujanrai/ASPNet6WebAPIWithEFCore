@@ -2,57 +2,50 @@
 {
     public class BookService : IBookService
     {
-        private static List<Book> books = new List<Book>
-        {
-            new Book
-            {
-                Id = 1,
-                Name = "Ikigai",
-                Description = "This is japanese book",
-                Price = 100,
-            },
-            new Book
-            {
-                Id = 2,
-                Name = "Think like a monk",
-                Description = "Book by Jay Shetty",
-                Price = 200,
-            }
-        };
+        private readonly DataContext _context;
 
-        public List<Book> AddBook(Book book)
+        public BookService(DataContext context)
         {
-            books.Add(book);
-            return books;
+            _context = context;
         }
 
-        public List<Book> DeleteBook(int id)
+        public async Task<List<Book>> AddBook(Book book)
         {
-            var foundBook = books.Find(x => x.Id == id);
+            _context.Books.Add(book);
+
+            await _context.SaveChangesAsync();
+            return await _context.Books.ToListAsync();
+        }
+
+        public async Task<List<Book>?> DeleteBook(int id)
+        {
+            var foundBook = await _context.Books.FindAsync(id);
             if (foundBook is null)
                 return null;
 
-            books.Remove(foundBook);
-            return books;
+            _context.Books.Remove(foundBook);
+            await _context.SaveChangesAsync();
+
+            return await _context.Books.ToListAsync();
         }
 
-        public List<Book> GetAllBooks()
+        public async Task<List<Book>> GetAllBooks()
         {
-            return books;
+            return await _context.Books.ToListAsync();
         }
 
-        public Book GetSingleBook(int id)
+        public async Task<Book?> GetSingleBook(int id)
         {
-            var book = books.Find(x => x.Id == id);
-            if (book is null)
+            var foundBook = await _context.Books.FindAsync(id);
+            if (foundBook is null)
                 return null;
 
-            return book;
+            return foundBook;
         }
 
-        public List<Book> UpdateBook(int id, Book book)
+        public async Task<List<Book>?> UpdateBook(int id, Book book)
         {
-            var foundBook = books.Find(x => x.Id == id);
+            var foundBook = await _context.Books.FindAsync(id);
             if (foundBook is null)
                 return null;
 
@@ -60,7 +53,9 @@
             foundBook.Description = book.Description;
             foundBook.Price = book.Price;
 
-            return books;
+            await _context.SaveChangesAsync();
+
+            return await _context.Books.ToListAsync();
         }
     }
 }

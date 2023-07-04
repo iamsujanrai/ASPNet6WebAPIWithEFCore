@@ -17,28 +17,28 @@ namespace LibraryManagement.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Book>>> GetAllBooks()
         {
-            var result = _bookService.GetAllBooks();
+            var result = await _bookService.GetAllBooks();
             return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetSingleBook(int id)
         {
-            var result = _bookService.GetSingleBook(id);
+            var result = await _bookService.GetSingleBook(id);
             return Ok(result);
         }
 
         [HttpPost]
         public async Task<ActionResult<List<Book>>> AddBook(Book book)
         {
-            var result = _bookService.AddBook(book);
+            var result = await _bookService.AddBook(book);
             return Ok(result);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<List<Book>>> UpdateBook(int id, Book book)
         {
-            var result = _bookService.UpdateBook(id, book);
+            var result = await _bookService.UpdateBook(id, book);
             if (result is null)
                 return NotFound("Book not found in library.");
 
@@ -48,7 +48,7 @@ namespace LibraryManagement.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<List<Book>>> DeleteBook (int id)
         {
-            var result = _bookService.DeleteBook(id);
+            var result = await _bookService.DeleteBook(id);
             if (result is null)
                 return NotFound("Book not found in library.");
 

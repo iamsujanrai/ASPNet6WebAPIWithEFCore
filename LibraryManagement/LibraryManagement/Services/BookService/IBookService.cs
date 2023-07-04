@@ -2,10 +2,10 @@
 {
     public interface IBookService
     {
-        List<Book> GetAllBooks();
-        Book GetSingleBook(int id);
-        List<Book> AddBook(Book book);
-        List<Book> UpdateBook(int id, Book book);
-        List<Book> DeleteBook(int id);
+        Task<List<Book>> GetAllBooks();
+        Task<Book>? GetSingleBook(int id);
+        Task<List<Book>> AddBook(Book book);
+        Task<List<Book>>? UpdateBook(int id, Book book);
+        Task<List<Book>>? DeleteBook(int id);
     }
 }
